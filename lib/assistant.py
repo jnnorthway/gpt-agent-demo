@@ -10,7 +10,7 @@ from lib.db import DB
 class Assistant:
     """GPT Assistant class."""
 
-    def __init__(self, name=None, instructions=None, load=False, plugins=[], files=[]):
+    def __init__(self, name=None, instructions=None, load=False, plugins=[], files=[], code_interpreter=False):
         self.client = openai.OpenAI(default_headers={"OpenAI-Beta": "assistants=v2"})
         self.config = {
             "model": "gpt-4o",
@@ -23,7 +23,7 @@ class Assistant:
             return
         self.name = name
         self.db = DB(f"assistant_{self.name}.txt")
-        self.init_assistant(instructions, plugins, files)
+        self.init_assistant(instructions, plugins, files, code_interpreter)
         self.init_thread(load)
     
     @property
@@ -52,7 +52,7 @@ class Assistant:
         self.db.data["id"] = value
         self.db.save()
     
-    def init_assistant(self, instructions, plugins, files):
+    def init_assistant(self, instructions, plugins, files, code_interpreter):
         """Initialize assistant."""
         if self.id:
             self.assistant = self.load()
@@ -64,6 +64,8 @@ class Assistant:
             self.load_plugins(plugins)
         if files:
             self.load_files(files)
+        if code_interpreter:
+            self.tools.append({"type": "code_interpreter"})
         self.add_tools()
 
     def init_thread(self, load):

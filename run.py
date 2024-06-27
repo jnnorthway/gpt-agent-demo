@@ -6,9 +6,9 @@ from lib.assistant import Assistant
 def main(args):
     """Main function"""
     if args.action == "create":
-        assistant = Assistant(name=args.name, instructions=args.instructions, plugins=args.plugins, files=args.files)
+        assistant = Assistant(name=args.name, instructions=args.instructions, plugins=args.plugins, files=args.files, code_interpreter=args.code_interpreter)
     if args.action == "update":
-        assistant = Assistant(name=args.name, instructions=args.instructions, plugins=args.plugins, files=args.files)
+        assistant = Assistant(name=args.name, instructions=args.instructions, plugins=args.plugins, files=args.files, code_interpreter=args.code_interpreter)
     elif args.action == "delete":
         assistant = Assistant(name=args.name)
         assistant.delete()
@@ -38,5 +38,6 @@ if __name__ == "__main__":
     parser.add_argument("--load", action="store_true", default=False, help="Load existing thread")
     parser.add_argument("--plugins", type=str, nargs="+", help="List of plugins to enable")
     parser.add_argument("--files", type=str, nargs="+", help="List of files to store in the assistant's database")
+    parser.add_argument("--code-interpreter", action="store_true", default=False, help="Enable code interpreter for the assistant")
     args = parser.parse_args()
     main(args)

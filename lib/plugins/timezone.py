@@ -3,7 +3,7 @@ from datetime import datetime
 
 
 def get_plugin():
-    """Get tool information for OpenAI Assistant."""
+    """Get plugin information for OpenAI Assistant."""
     return {
       "type": "function",
       "function": {
