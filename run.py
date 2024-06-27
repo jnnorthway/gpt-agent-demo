@@ -32,7 +32,7 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Interact with GPT Assistants.")
-    parser.add_argument("action", type=str, help="Action to perform")
+    parser.add_argument("action", type=str, help="Action to perform [create, update, delete, list, chat]")
     parser.add_argument("--name", type=str, help="Assistant name")
     parser.add_argument("--instructions", type=str, help="Assistant instructions")
     parser.add_argument("--load", action="store_true", default=False, help="Load existing thread")
