@@ -1,1 +1,1 @@
-# gpt-agent-demo
+# OpenAI Assistants API Demo
