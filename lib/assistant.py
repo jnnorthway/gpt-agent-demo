@@ -15,31 +15,63 @@ class Assistant:
         self.config = {
             "model": "gpt-4o",
         }
+        self.tools = []
+        self._name = None
+        self._id = None
+        self.assistant = None
         if name is None:
             return
-        if " " in name:
-            name = name.replace(" ", "-")
         self.name = name
-        self.db = DB(os.path.join("data", f"assistant_{self.name}.txt"))
-        self.id = self.db.data.get("id")
+        self.db = DB(f"assistant_{self.name}.txt")
+        self.init_assistant(instructions, plugins, files)
+        self.init_thread(load)
+    
+    @property
+    def name(self):
+        """Get the assistant's name."""
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        """Set the assistant's name."""
+        if " " in value:
+            value = value.replace(" ", "-")
+        self._name = value
+    
+    @property
+    def id(self):
+        """Get the assistant's ID."""
+        if not self._id:
+            self._id = self.db.data.get("id")
+        return self._id
+    
+    @id.setter
+    def id(self, value):
+        """Set the assistant's ID."""
+        self._id = value
+        self.db.data["id"] = value
+        self.db.save()
+    
+    def init_assistant(self, instructions, plugins, files):
+        """Initialize assistant."""
         if self.id:
             self.assistant = self.load()
         else:
             self.assistant = self.load_from_name()
         if not self.assistant:
-            if instructions is None:
-                raise ValueError("Instructions are required to create a new assistant.")
             self.assistant = self.create(instructions)
-        if load and self.db.data.get("thread_id"):
-            self.load_thread()
-        else:
-            self.create_thread()
-        self.tools = []
         if plugins:
             self.load_plugins(plugins)
         if files:
             self.load_files(files)
         self.add_tools()
+
+    def init_thread(self, load):
+        """Initialize thread."""
+        if load:
+            self.load_thread()
+        else:
+            self.create_thread()
 
     def load_plugins(self, plugins):
         """Load plugins."""
@@ -70,6 +102,8 @@ class Assistant:
 
     def create(self, instructions):
         """Create a new assistant."""
+        if instructions is None:
+            raise ValueError("Instructions are required to create a new assistant.")
         assistant = self.client.beta.assistants.create(
             name=self.name,
             model=self.config["model"],

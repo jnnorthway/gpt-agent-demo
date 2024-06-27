@@ -2,20 +2,30 @@
 import os
 
 
-def get_default_db_path():
-    """Return the path to the default db text file."""
-    return os.path.join("data", "db.txt")
+def get_default_db_file():
+    """Return the filename for the default db text file."""
+    return "db.txt"
 
 
 class DB:
     """Simple database class using a text file to store data."""
 
     def __init__(self, path=None):
-        if path:
-            self.path = path
-        else:
-            self.path = get_default_db_path()
+        self._path = None
+        self.path = path
         self.data = self.load()
+        
+    @property
+    def path(self):
+        """Get the path to the db text file."""
+        return self._path
+
+    @path.setter
+    def path(self, value=None):
+        """Set the path to the db text file."""
+        if not value:
+            value = get_default_db_file()
+        self._path = os.path.join("data", value)
     
     def load(self):
         """Load data from the db text file."""
