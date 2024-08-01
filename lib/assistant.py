@@ -60,6 +60,11 @@ class Assistant:
             self.assistant = self.load_from_name()
         if not self.assistant:
             self.assistant = self.create(instructions)
+        elif instructions:
+            self.assistant = self.client.beta.assistants.update(
+                assistant_id=self.id,
+                instructions=instructions,
+            )
         if plugins:
             self.load_plugins(plugins)
         if files:
