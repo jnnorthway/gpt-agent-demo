@@ -222,6 +222,7 @@ class Assistant:
             run_id=run.id,
             tool_outputs=tool_outputs,
         )
+        return self.last_message
 
     def get_reply(self):
         """Get the assistant's reply."""
@@ -236,8 +237,7 @@ class Assistant:
         logger.debug(f"Run steps: {run_steps}")
         if run.status == "requires_action":
             logger.debug(f"Run requires action: {run.required_action.submit_tool_outputs.tool_calls}")
-            self.handle_calls(run, run.required_action.submit_tool_outputs.tool_calls)
-            return self.get_reply()
+            return self.handle_calls(run, run.required_action.submit_tool_outputs.tool_calls)
         logger.debug(f"Usage: {run.usage}")
         if run.status != "completed":
             logger.error(f"Run failed: {run}")

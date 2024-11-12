@@ -10,7 +10,11 @@ def main(args):
     if args.action == "update":
         assistant = Assistant(name=args.name, instructions=args.instructions, plugins=args.plugins, files=args.files, code_interpreter=args.code_interpreter)
     elif args.action == "delete":
-        assistant = Assistant(name=args.name)
+        try:
+            assistant = Assistant(name=args.name)
+        except ValueError:
+            logger.warning("Assistant not found.")
+            return
         assistant.delete()
     elif args.action == "list":
         assistant = Assistant(None)
@@ -19,15 +23,18 @@ def main(args):
         assistant = Assistant(name=args.name, load=args.load)
         message = None
         logger.warning("Type 'exit' to end the conversation.")
-        while message != "exit":
-            message = input("You: ")
-            if message == "exit":
-                break
-            assistant.message(message)
-            response = assistant.get_reply()
-            if not response:
-                break
-            logger.info(f"Assistant: {response.data[0].content[0].text.value}")
+        try:
+            while message != "exit":
+                message = input("You: ")
+                if message == "exit":
+                    break
+                assistant.message(message)
+                response = assistant.get_reply()
+                if not response:
+                    break
+                logger.info(f"Assistant: {response.data[0].content[0].text.value}")
+        except KeyboardInterrupt:
+            pass
 
 
 if __name__ == "__main__":
